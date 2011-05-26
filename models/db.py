@@ -52,7 +52,7 @@ auth.messages.reset_password = 'Click on the link http://'+request.env.http_host
 ## If you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, uncomment and customize following
 # from gluon.contrib.login_methods.rpx_account import RPXAccount
-# auth.settings.actions_disabled=['register','change_password','request_reset_password']
+auth.settings.actions_disabled=['login','register','change_password','request_reset_password']
 # auth.settings.login_form = RPXAccount(request, api_key='...',domain='...',
 #    url = "http://localhost:8000/%s/default/user/login" % request.application)
 ## other login methods are in gluon/contrib/login_methods
@@ -60,19 +60,22 @@ auth.messages.reset_password = 'Click on the link http://'+request.env.http_host
 
 crud.settings.auth = None                      # =auth to enforce authorization on crud
 
-#########################################################################
-## Define your tables below (or better in another model file) for example
-##
-## >>> db.define_table('mytable',Field('myfield','string'))
-##
-## Fields can be 'string','text','password','integer','double','boolean'
-##       'date','time','datetime','blob','upload', 'reference TABLENAME'
-## There is an implicit 'id integer autoincrement' field
-## Consult manual for more options, validators, etc.
-##
-## More API examples for controllers:
-##
-## >>> db.mytable.insert(myfield='value')
-## >>> rows=db(db.mytable.myfield=='value').select(db.mytable.ALL)
-## >>> for row in rows: print row.id, row.myfield
-#########################################################################
+
+db.define_table('server',
+                Field('address', requires = IS_MATCH('^\d{1,3}(\.\d{1,3}){3}$', error_message= T('not an IP address'))),
+                Field('port', 'integer', default=161),
+                auth.signature,
+                format='%(address)s')
+
+db.define_table('reading',
+                Field('server', db.server),
+                Field('cpu_utilization', 'double'),
+                Field('mem_total', 'double'),
+                Field('mem_used', 'double'),
+                Field('mem_utilization', 'double'),
+                Field('swap_total', 'double'),
+                Field('swap_used', 'double'),
+                Field('swap_utilization', 'double'),
+                Field('created_on','datetime', default=request.now))
+
+a0,a1 = request.args(0), request.args(1)
