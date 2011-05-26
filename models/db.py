@@ -62,7 +62,7 @@ crud.settings.auth = None                      # =auth to enforce authorization 
 
 
 db.define_table('server',
-                Field('address', requires = IS_MATCH('^\d{1,3}(\.\d{1,3}){3}$', error_message= T('not an IP address'))),
+                Field('address', requires = [IS_MATCH('^\d{1,3}(\.\d{1,3}){3}$', error_message= T('not an IP address')), IS_NOT_IN_DB(db, 'server.address')], required=True),
                 Field('port', 'integer', default=161),
                 auth.signature,
                 format='%(address)s')

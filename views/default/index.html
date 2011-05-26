@@ -1,44 +1,64 @@
 {{extend 'layout.html'}}
 
-<div id="placeholder"></div>
-
 <ul id="servers">
+    <li><a class="edit-link" href="{{=URL('server')}}">{{=T('Add new')}}</a></li>
 {{for s in servers:}}
 <li>
   <a href="{{=URL('reports', args=s.id)}}">{{=s.address}}</a>
-  <a class="undercover server-link" href="{{=URL('server', args=s.id)}}">{{=T('Edit')}}
+  <a class="undercover edit-link" href="{{=URL('server', args=s.id)}}">{{=T('Edit')}}</a>
+  <a class="undercover delete-link" href="{{=URL('server_remove', args=s.id)}}">{{=T('Remove')}}</a>
 </li>
 {{pass}}
-<li><a class="server-link" href="{{=URL('server')}}">{{=T('Add new')}}</a></li>
 </ul>
 
+<div id="placeholder"></div>
+
 <script type="text/javascript">
-    function prepareForm(href){
+    function prepareForm(link){
+	var href = link.attr("href");
 	$("form").submit(function(){
 	    $.post(href, $(this).serialize(), function(data){
 		if(data.indexOf("error") == -1){
-		    console.log("done");
+		    link.parents("ul").append(data);
+		    $("#placeholder").slideUp();
+		    $("#placeholder").text("");
+		    setup();
 		} else {
 		    $("#placeholder").html(data);
-		    prepareForm(href);
+		    prepareForm(link);
 		}
 	    });
 	    return false;
 	});
     }
-    $(function(){
-	$(".server-link").click(function(e){
-	    var href = $(this).attr("href");
-	    $("#placeholder").load($(this).attr("href"), function(){
-		$(this).slideDown();
-		prepareForm(href);
-	    });
-	    e.preventDefault();
+function setup(){
+    $(".edit-link").unbind();
+    $("#servers li").unbind();
+    $(".delete-link").unbind();
+    $(".edit-link").click(function(e){
+	var link = $(this);
+	$("#placeholder").load($(this).attr("href"), function(){
+	    $(this).slideDown();
+	    prepareForm(link);
 	});
-	$("#servers li").mouseover(function(){
-	    $(this).children("a.undercover").fadeIn();
-	}).mouseleave(function(){
-	    $(this).children("a.undercover").fadeOut();
-	});
+	e.preventDefault();
     });
+    $(".delete-link").click(function(e){
+	if(confirm("{{=T('Are you shure you want to delete this server? Deleting it will erase all readings related to it!')}}")) {
+	    $(this).parents("li:first").remove();
+	    $.get($(this).attr("href"));
+	}
+	e.preventDefault();
+    });
+    
+    $("#servers li").mouseover(function(){
+	$(this).children("a.undercover").fadeIn();
+    }).mouseleave(function(){
+	$(this).children("a.undercover").fadeOut();
+    });
+    
+}
+$(function(){
+    setup();
+});
 </script>

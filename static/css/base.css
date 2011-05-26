@@ -775,3 +775,16 @@ table#change-history tbody th {
 .undercover {
     display: none;
 }
+
+#placeholder{
+    float: left:
+    margin-left: 30%;
+}
+#servers {
+    float:left;
+    width: 30%;
+}
+
+a.delete-link {
+    color: indianred;
+}

@@ -1,12 +1,27 @@
 # -*- coding: utf-8 -*-
 
 def index():
-    servers = db(db.server).select()
+    servers = db(db.server).select(orderby=db.server.created_on)
     return locals()
 
 def server():
-    form = crud.update(db.server, a0)
+    form = crud.update(db.server, a0, deletable=False)
+    if form.accepts(request.vars, session):
+        return """
+<li> 
+  <a href="%(rurl)s">%(addr)s</a> 
+  <a class="undercover edit-link" href="%(eurl)s">Edit</a>
+  <a class="undercover delete-link" href="%(durl)s">Remove</a>
+</li> 
+""" % {'addr': form.vars.address,
+       'rurl': URL('reports', args=form.vars.id),
+       'eurl': URL('server', args=form.vars.id),
+       'durl': URL('server_remove', args=form.vars.id)}
     return locals()
+
+def server_remove():
+    db(db.server.id==a0).delete()
+    return ""
 
 def reports():
     return locals()
