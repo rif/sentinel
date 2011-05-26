@@ -24,6 +24,12 @@ def server_remove():
     return ""
 
 def reports():
+    form = SQLFORM.factory(
+        Field('fee_earner', default=(request.vars.fee_earner or session.fee_earner or auth.user_id))
+        )
+    if form.accepts(request.vars, session):
+        response.flash = T('Fee earner changed to %s') % db.auth_user(form.vars.fee_earner).first_name
+        session.fee_earner = form.vars.fee_earner
     return locals()
 
 def user():
