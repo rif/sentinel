@@ -1,5 +1,7 @@
 {{extend 'layout.html'}}
 
+<div id="placeholder"></div>
+
 <ul id="servers">
     <li><a class="edit-link" href="{{=URL('server')}}">{{=T('Add new')}}</a></li>
 {{for s in servers:}}
@@ -11,9 +13,45 @@
 {{pass}}
 </ul>
 
-<div id="placeholder"></div>
+<div id="report">
+{{=form}}
+<center>
+    <div id="chart-container-1" style="width: 60%"></div>
+</center>
+</div>
+
+<script type="text/javascript" src="{{=URL('static','js/highcharts.js')}}"></script>
+<script type="text/javascript" src="{{=URL('static','js/themes/grid.js')}}"></script>
 
 <script type="text/javascript">
+  var chart1; // globally available
+    $(document).ready(function() {
+	chart1 = new Highcharts.Chart({
+            chart: {
+		renderTo: 'chart-container-1',
+		defaultSeriesType: 'line'
+            },
+            title: {
+		text: 'Fruit Consumption'
+            },
+            xAxis: {
+		categories: ['Apples', 'Bananas', 'Oranges']
+            },
+            yAxis: {
+		title: {
+		    text: 'Fruit eaten'
+		}
+            },
+            series: [{
+		name: 'Jane',
+		data: [1, 0, 4]
+            }, {
+		name: 'John',
+		data: [5, 7, 3]
+            }]
+	});
+    });
+
     function prepareForm(link){
 	var href = link.attr("href");
 	$("form").submit(function(){

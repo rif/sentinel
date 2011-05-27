@@ -776,10 +776,11 @@ table#change-history tbody th {
     display: none;
 }
 
-#placeholder{
+#report{
     float: left:
     margin-left: 30%;
 }
+
 #servers {
     float:left;
     width: 30%;
@@ -787,4 +788,8 @@ table#change-history tbody th {
 
 a.delete-link {
     color: indianred;
+}
+
+a.cancel {
+    margin-left: 20%;
 }
