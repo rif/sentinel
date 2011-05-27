@@ -766,6 +766,25 @@ table#change-history tbody th {
     color: #666;
 }
 
+div.flash {
+    font-weight: bold;
+    display: none;
+    position: fixed;    
+    padding: 10px;
+    top: 40px;
+    right: 10px;
+    min-width: 280px;
+    opacity: 0.85;
+    margin: 0px 0px 10px 10px;    
+    color: #fff;    
+    vertical-align: middle;
+    cursor: pointer;
+    background: #000;
+    border: 2px solid #fff;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    z-index: 2;
+}
 
 
 #site-name {

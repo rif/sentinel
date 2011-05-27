@@ -3,13 +3,12 @@
 def index():
     servers = db(db.server).select(orderby=db.server.created_on)
     form = SQLFORM.factory(
-        Field('metric', requires=IS_IN_SET([f.replace('_',' ').title() for f in db.reading.fields[2:-1]])),
+        Field('metric', requires=IS_IN_SET([f.replace('_',' ').title() for f in db.reading.fields[2:-1]]), default = 1),
         Field('start', 'datetime'),
         Field('end', 'datetime')
         )
     if form.accepts(request.vars, session):
-        response.flash = T('Fee earner changed to %s') % db.auth_user(form.vars.fee_earner).first_name
-        session.fee_earner = form.vars.fee_earner
+        response.flash = T('Metric changed')
     return locals()
 
 def server():
