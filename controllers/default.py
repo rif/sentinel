@@ -29,14 +29,17 @@ def server():
 
 def server_remove():
     db(db.server.id==a0).delete()
+    response.flash(T('Server deleted'))
     return ""
 
-def user():
-    return dict(form=auth())
-
-def download():
-    return response.download(request,db)
-
-def call():
-    session.forget()
-    return service()
+def get_data():
+    readings = db(db.reading.server == 1).select(orderby=db.reading.created_on)
+    from gluon.contrib import simplejson as sj
+    import time
+    d = dict(type= 'area',
+         name= 'CPU Utilization',
+         pointInterval= 5 * 60 * 1000, # five minutes //24 * 3600 *1000 //one day
+         pointStart= time.mktime(readings.first().created_on.timetuple())*1000,
+         data= [r.cpu_utilization for r in readings])
+    response.headers['Content-Type']='application/json'
+    return sj.dumps(d)
