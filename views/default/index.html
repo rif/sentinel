@@ -19,9 +19,12 @@
 	$("form").submit(function(){
 	    $.post(href, $(this).serialize(), function(data){
 		if(data.indexOf("error") == -1){
-		    link.parents("ul").append(data);
+		    if($(".editing").length != 0) { // we have elements in editing state
+			$(".editing").parent().replaceWith(data);
+		    } else {
+			link.parents('ul').append(data); 
+		    }
 		    $("#placeholder").slideUp();
-		    $("#placeholder").text("");
 		    setup();
 		} else {
 		    $("#placeholder").html(data);
@@ -35,8 +38,10 @@ function setup(){
     $(".edit-link").unbind();
     $("#servers li").unbind();
     $(".delete-link").unbind();
-    $(".edit-link").click(function(e){
+    $(".edit-link").click(function(e){    
 	var link = $(this);
+	$(".editing").removeClass("editing");
+	link.prev("a").addClass("editing");
 	$("#placeholder").load($(this).attr("href"), function(){
 	    $(this).slideDown();
 	    prepareForm(link);

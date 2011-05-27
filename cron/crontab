@@ -1,1 +1,2 @@
 #crontab
+*/1 * * * *	rif *applications/sentinel/cron/start_readers.py
