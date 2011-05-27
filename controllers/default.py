@@ -38,7 +38,9 @@ def set_metrics():
     session.metric = request.vars.metric
     session.start = request.vars.start
     session.end = request.vars.end
-    return ''
+    from gluon.contrib import simplejson as sj
+    response.headers['Content-Type']='application/json'
+    return sj.dumps([session.metric, session.start, session.end])
 
 def get_data():
     query = db.reading.server == (session.server or 1)
@@ -54,10 +56,11 @@ def get_data():
     import time
     metric = session.metric or "Cpu utilization"
     metric = metric.replace(' ','_').lower()
+    first_reading = readings.first()
     d = dict(type= 'spline',
          name= session.metric,
          pointInterval= 5 * 60 * 1000, # five minutes //24 * 3600 *1000 //one day
-         pointStart= time.mktime(readings.first().created_on.timetuple())*1000,
+         pointStart= time.mktime(first_reading.created_on.timetuple())*1000 if first_reading else 0,
          data= [r[metric] for r in readings])
     response.headers['Content-Type']='application/json'
     return sj.dumps(d)

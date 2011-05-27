@@ -113,6 +113,12 @@
 	});
 	$("#report>form").submit(function(){
 	    $.post("{{=URL('set_metrics')}}", $(this).serialize(), function(data){
+		options.title.text = data[0]
+		if(data[1] && data[2]){
+		    options.subtitle.text = 'From '+data[1]+' to '+data[2];
+		} else {
+		    options.subtitle.text = 'Click and drag in the plot area to zoom in';
+		}
 		reloadChart(options);
 	    });
 	    return false;
