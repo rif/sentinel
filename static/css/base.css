@@ -805,6 +805,16 @@ div.flash {
     width: 30%;
 }
 
+#server-list {
+    height: 70%;
+    overflow: auto;
+}
+
+a.selected-server {
+    font-weight: bold;
+    color: darkgreen;
+}
+
 a.delete-link {
     color: indianred;
 }

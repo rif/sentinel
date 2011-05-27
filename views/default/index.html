@@ -1,22 +1,25 @@
 {{extend 'layout.html'}}
 
-<div id="placeholder"></div>
-
-<ul id="servers">
+<div id="servers">
+<div id="server-list">
+<ul>
     <li><a class="edit-link" href="{{=URL('server')}}">{{=T('Add new')}}</a></li>
-{{for s in servers:}}
-<li>
-  <a href="{{=URL('reports', args=s.id)}}">{{=s.address}}</a>
-  <a class="undercover edit-link" href="{{=URL('server', args=s.id)}}">{{=T('Edit')}}</a>
-  <a class="undercover delete-link" href="{{=URL('server_remove', args=s.id)}}">{{=T('Remove')}}</a>
-</li>
-{{pass}}
+    {{for i,s in enumerate(servers):}}
+    <li>
+      <a class="select-server {{='selected-server' if i==0 else ''}}" href="{{=URL('set_server', args=s.id)}}" title="{{=s.reader}}">{{=s.address}}</a>
+      <a class="undercover edit-link" href="{{=URL('server', args=s.id)}}">{{=T('Edit')}}</a>
+      <a class="undercover delete-link" href="{{=URL('server_remove', args=s.id)}}">{{=T('Remove')}}</a>
+    </li>
+    {{pass}}
 </ul>
+</div>
+<div id="placeholder"></div>
+</div>
 
 <div id="report">
 {{=form}}
 <center>
-    <div id="chart-container-1" style="width: 60%"></div>
+    <div id="chart-container-1" style="height:50%; width: 60%"></div>
 </center>
 </div>
 
@@ -25,109 +28,117 @@
 <script type="text/javascript" src="{{=URL('static','js/modules/exporting.js')}}"></script>
 
 <script type="text/javascript">
-   /* var chart; // globally available
-    function requestData() {
-    $.getJSON("{{=URL('get_data')}}", function(data){
-    chart.series.name = data.name;
-    chart.series[0].pointInterval = data.pointInterval;
-    chart.series[0].pointStart = data.pointStart;
-    chart.series[0].data = data.data;
-    chart.redraw();
-    });
-    }*/
-$(document).ready(function() {
-    var options = {
-	chart: {
-	    renderTo: 'chart-container-1',
-	    zoomType: 'x',
-	    spacingRight: 20
-	},
-	title: {
-	    text: 'USD to EUR exchange rate from 2006 through 2008'
-	},
-	subtitle: {
-	    text: document.ontouchstart === undefined ?
-		'Click and drag in the plot area to zoom in' :
-		'Drag your finger over the plot to zoom in'
-	},
-	xAxis: {
-	    type: 'datetime',
-	    maxZoom: 3600000, // one hour
-	    title: {
-		text: null
-	    }
-	},
-	yAxis: {
-	    title: {
-		text: 'Exchange rate'
+    function reloadChart(options){
+	$.getJSON("{{=URL('get_data')}}", function(data){
+	    options.series[0] = data;
+	    chart = new Highcharts.Chart(options);
+	});
+    }
+    $(function() {
+	options = {
+	    chart: {
+		renderTo: 'chart-container-1',
+		zoomType: 'x',
+		spacingRight: 20
 	    },
-	    min: 0.6,
-	    startOnTick: false,
-	    showFirstLabel: false
-	},
-	tooltip: {
-	    shared: true					
-	},
-	legend: {
-	    enabled: false
-	},
-	plotOptions: {
-	    area: {
-		fillColor: {
-		    linearGradient: [0, 0, 0, 300],
-		    stops: [
-			
-			[1, 'rgba(2,0,0,0)']
-		    ]
+	    title: {
+		text: 'Server Monitor'
+	    },
+	    subtitle: {
+		text: document.ontouchstart === undefined ?
+		    'Click and drag in the plot area to zoom in' :
+		    'Drag your finger over the plot to zoom in'
+	    },
+	    xAxis: {
+		type: 'datetime',
+		maxZoom: 3600000, // one hour
+		title: {
+		    text: null
+		}
+	    },
+	    yAxis: {
+		title: {
+		    text: 'Exchange rate'
 		},
-		lineWidth: 1,
-		marker: {
-		    enabled: false,
+		min: 0.6,
+		startOnTick: false,
+		showFirstLabel: false
+	    },
+	    tooltip: {
+		shared: true					
+	    },
+	    legend: {
+		enabled: false
+	    },
+	    plotOptions: {
+		area: {
+		    fillColor: {
+			linearGradient: [0, 0, 0, 300],
+			stops: [
+			    
+			    [1, 'rgba(2,0,0,0)']
+			]
+		    },
+		    lineWidth: 1,
+		    marker: {
+			enabled: false,
+			states: {
+			    hover: {
+				enabled: true,
+				radius: 5
+			    }
+			}
+		    },
+		    shadow: false,
 		    states: {
 			hover: {
-			    enabled: true,
-			    radius: 5
+			    lineWidth: 1						
 			}
 		    }
-		},
-		shadow: false,
-		states: {
-		    hover: {
-			lineWidth: 1						
-		    }
 		}
-	    }
-	},
+	    },
+	    
+	    series: []
+	};
 	
-	series: []
-    };
-    $.getJSON("{{=URL('get_data')}}", function(data){
-	options.series[0] = data;
-	chart = new Highcharts.Chart(options);
-    });
-   
-});	
-
-    function prepareForm(link){
-	var href = link.attr("href");
-	$("form").submit(function(){
-	    $.post(href, $(this).serialize(), function(data){
-		if(data.indexOf("error") == -1){
-		    if($(".editing").length != 0) { // we have elements in editing state
-			$(".editing").parent().replaceWith(data);
-		    } else {
-			link.parents('ul').append(data); 
-		    }
-		    $("#placeholder").slideUp();
-		    setup();
-		} else {
-		    $("#placeholder").html(data);
-		    prepareForm(link);
-		}
+	reloadChart(options);
+	setup();
+	$(".select-server").click(function(e){
+	    $(".selected-server").removeClass("selected-server")
+	    $(this).addClass("selected-server");
+	    $.get($(this).attr("href"),function(data){
+		reloadChart(options);
+	    });
+	    e.preventDefault();
+	});
+	$("#report>form").submit(function(){
+	    $.post("{{=URL('set_metrics')}}", $(this).serialize(), function(data){
+		reloadChart(options);
 	    });
 	    return false;
 	});
-    };
+    });	
+
+function prepareForm(link){
+    var href = link.attr("href");
+    $("#placeholder>form").submit(function(){
+	$.post(href, $(this).serialize(), function(data){
+	    if(data.indexOf("error") == -1){
+		if($(".editing").length != 0) { // we have elements in editing state
+		    $(".editing").parent().replaceWith(data);
+		} else {
+		    link.parents('ul').append(data); 
+		}
+		$("#placeholder").slideUp();
+		setup();
+	    } else {
+		$("#placeholder").html(data);
+		prepareForm(link);
+	    }
+	});
+	return false;
+    });
+};
 function setup(){
     $(".edit-link").unbind();
     $("#servers li").unbind();
@@ -157,7 +168,5 @@ function setup(){
     });
     
 }
-$(function(){
-    setup();
-});
+
 </script>
