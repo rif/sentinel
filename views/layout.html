@@ -59,42 +59,39 @@
     <div class="flash">{{=response.flash or ''}}</div> <!-- notification div -->
     
     <div id="container">	      		      	
-      
-      <div id="content">		
-	
-	<div id="header"> <!-- header and login nav -->
+      	<div id="header"> <!-- header and login nav -->
 	  {{block header}} <!-- this is default header -->
 	  
 	  <h1><a href="{{=URL('index')}}"><span id="site-name">{{=request.application.capitalize()}}</span></a>App</h1>
 	  <div style="clear: both;"></div><!-- Clear the divs -->
 	  {{end}}				  					  
 	</div><!-- header  -->
-	
-	<div id="statusbar"><!-- statusbar is menu zone -->
-	  {{block statusbar}} <!-- this is default statusbar -->
-	  <div style="clear: both;"></div><!-- Clear the divs -->	
-	  {{end}}				
-	</div><!-- statusbar -->
-	
-	<div id="page"> <!-- Here my central body -->	  
 
-	  <!-- content -->
-	  <div id="content-main" {{=XML(style_content)}} >
-	    {{include}}	
-	  </div>
-	  <!-- content -->
-
-	  <div style="clear: both;"></div><!-- Clear the divs -->
+	<div id="content">			
+	  <div id="statusbar"><!-- statusbar is menu zone -->
+	    {{block statusbar}} <!-- this is default statusbar -->
+	    <div style="clear: both;"></div><!-- Clear the divs -->	
+	    {{end}}				
+	  </div><!-- statusbar -->
 	  
-	</div><!-- page -->							
-	
+	  <div id="page"> <!-- Here my central body -->	  
+
+	    <!-- content -->
+	    <div id="content-main" {{=XML(style_content)}} >
+	      {{include}}	
+	    </div>
+	    <!-- content -->
+
+	    <div style="clear: both;"></div><!-- Clear the divs -->
+	    
+	  </div><!-- page -->							
+	</div><!-- content -->
 	<div id="footer">
-	  {{block footer}} <!-- this is default footer -->	
+	  {{block footer}} <!-- this is default footer -->
+	  {{=T('Created by Radu Fericean for')}} <a href="http://upandrunningsoftware.com">UpAndRunningSoftware</a>
 	  <div style="clear: both;"></div><!-- Clear the divs -->
 	  {{end}}
-
 	</div><!-- footer -->			
-      </div><!-- wrapper -->
     </div><!-- container -->		
   </body>
 </html>

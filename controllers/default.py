@@ -3,7 +3,9 @@
 def index():
     servers = db(db.server).select(orderby=db.server.created_on)
     form = SQLFORM.factory(
-        Field('fee_earner', default=(request.vars.fee_earner or session.fee_earner or auth.user_id))
+        Field('metric', requires=IS_IN_SET([f.replace('_',' ').title() for f in db.reading.fields[2:-1]])),
+        Field('start', 'datetime'),
+        Field('end', 'datetime')
         )
     if form.accepts(request.vars, session):
         response.flash = T('Fee earner changed to %s') % db.auth_user(form.vars.fee_earner).first_name
