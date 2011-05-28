@@ -1,8 +1,9 @@
 #!/bin/env python
 from random_reader import RandomReader
+from ssh_reader import SSHReader
 
 class_dict = {'rnd': RandomReader,
-              'ssh': RandomReader,
+              'ssh': SSHReader,
               'snmp': RandomReader}
 
 for s in db(db.server.is_active == True).select():
@@ -12,10 +13,8 @@ for s in db(db.server.is_active == True).select():
                       cpu_utilization = info_array[0],
                       mem_total = info_array[1],
                       mem_used = info_array[2],
-                      mem_utilization = info_array[3],
-                      swap_total = info_array[4],
-                      swap_used = info_array[5],
-                      swap_utilization = info_array[6]
+                      swap_total = info_array[3],
+                      swap_used = info_array[4],
                       )
     db.commit()
 

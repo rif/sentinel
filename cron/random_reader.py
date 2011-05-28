@@ -7,6 +7,6 @@ class RandomReader(object):
 
     def read(self):
         info_array = []
-        for i in range(7):
+        for i in range(5):
             info_array.append(random.randint(0,100))
         return info_array
