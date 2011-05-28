@@ -51,7 +51,6 @@ def get_data():
     if session.end:
         query &= (db.reading.created_on <=  datetime.strptime(session.end,format))
     readings = db(query).select(orderby=db.reading.created_on)
-    print readings
     from gluon.contrib import simplejson as sj
     import time
     metric = session.metric or "Cpu utilization"
@@ -61,6 +60,6 @@ def get_data():
          name= session.metric,
          pointInterval= 5 * 60 * 1000, # five minutes //24 * 3600 *1000 //one day
          pointStart= time.mktime(first_reading.created_on.timetuple())*1000 if first_reading else 0,
-         data= [r[metric] for r in readings])
+         data= [float(r[metric]) for r in readings])
     response.headers['Content-Type']='application/json'
     return sj.dumps(d)

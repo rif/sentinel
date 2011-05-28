@@ -4,15 +4,16 @@
 <div id="server-list">
 <ul>
     <li><a class="edit-link" href="{{=URL('server')}}">{{=T('Add new')}}</a></li>
-    {{for i,s in enumerate(servers):}}
+    {{for s in servers:}}
     <li>
-      <a class="select-server {{='selected-server' if i==0 else ''}}" href="{{=URL('set_server', args=s.id)}}" title="{{=s.reader}}">{{=s.address}}</a>
+      <a class="select-server {{='selected-server' if str(s.id)==session.server else ''}}" href="{{=URL('set_server', args=s.id)}}" title="{{=s.reader}}">{{=s.address}}</a>
       <a class="undercover edit-link" href="{{=URL('server', args=s.id)}}">{{=T('Edit')}}</a>
       <a class="undercover delete-link" href="{{=URL('server_remove', args=s.id)}}">{{=T('Remove')}}</a>
     </li>
     {{pass}}
 </ul>
 </div>
+
 <div id="placeholder"></div>
 </div>
 
@@ -58,7 +59,7 @@
 	    },
 	    yAxis: {
 		title: {
-		    text: 'Exchange rate'
+		    text: 'Procentage or MB'
 		},
 		min: 0.6,
 		startOnTick: false,

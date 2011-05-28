@@ -7,6 +7,9 @@ class RandomReader(object):
 
     def read(self):
         info_array = []
-        for i in range(5):
-            info_array.append(random.randint(0,100))
+        info_array.append(random.randint(1,100)) //cpu
+        info_array.append(random.randint(0,8000)) //mem_total
+        info_array.append(random.randint(0,8000)) //mem_used
+        info_array.append(random.randint(0,8000)) //swap_total
+        info_array.append(random.randint(0,8000)) //swap_used
         return info_array

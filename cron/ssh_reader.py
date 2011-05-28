@@ -9,9 +9,9 @@ class SSHReader(object):
         ssh_command = """
 python -c "import psutil;m=1024*1024;c=psutil.cpu_percent(interval=5);t=psutil.TOTAL_PHYMEM/m;u=(psutil.used_phymem()-psutil.cached_phymem())/m;vt=psutil.total_virtmem()/m;vu=psutil.used_virtmem()/m;print c,t,u,vt,vu"
 """
-        process = subprocess.Popen("ssh -p %d %s %s" % (self.port, self.ip, ssh_command), shell=True,
+        process = subprocess.Popen("ssh -p %d %s '%s'" % (self.port, self.ip, ssh_command), shell=True,
                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         output,stderr = process.communicate()
         status = process.poll()
-        print output
+        print [float(r) for r in output.strip().split(' ')]
         return [float(r) for r in output.strip().split(' ')]

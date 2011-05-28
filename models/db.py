@@ -73,10 +73,10 @@ db.define_table('reading',
                 Field('cpu_utilization', 'double'),
                 Field('mem_total', 'double'),
                 Field('mem_used', 'double'),
-                Field('mem_utilization', compute=lambda r: r['men_used']*100/r['mem_total']),
+                Field('mem_utilization', compute=lambda r: r['mem_used']*100/r['mem_total'] if r['mem_total'] > 0 else 0),
                 Field('swap_total', 'double'),
                 Field('swap_used', 'double'),
-                Field('swap_utilization', compute=lambda r: r['swap_used']*100/r['swap_total']),
+                Field('swap_utilization', compute=lambda r: r['swap_used']*100/r['swap_total'] if r['swap_total'] > 0 else 0),
                 Field('created_on','datetime', default=request.now))
 
 a0,a1 = request.args(0), request.args(1)
