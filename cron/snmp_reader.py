@@ -8,7 +8,7 @@ from datetime import timedelta
 
 from iniParser import Parser
 
-class SNMPQuery(object):
+class SNMPReader(object):
 	def __init__(self, host, port=161):
 		self.host = host
 		self.port = port
@@ -248,6 +248,6 @@ class SNMPoIDNotSupported(Exception):
 
 
 if __name__ == '__main__':
-	snmp = SNMPQuery('95.76.70.39')
+	snmp = SNMPReader('127.0.0.1')
 	while(True):
 		print snmp.read()
