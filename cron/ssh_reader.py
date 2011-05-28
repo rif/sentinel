@@ -13,5 +13,4 @@ python -c "import psutil;m=1024*1024;c=psutil.cpu_percent(interval=5);t=psutil.T
                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         output,stderr = process.communicate()
         status = process.poll()
-        print [float(r) for r in output.strip().split(' ')]
         return [float(r) for r in output.strip().split(' ')]
