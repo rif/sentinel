@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 
 def index():
-    from datetime import datetime
     servers = db(db.server).select(orderby=db.server.created_on)
     metrics = [f.replace('_',' ').title() for f in db.reading.fields[2:-1]]
-    now = datetime.now()
     form = SQLFORM.factory(
         Field('metric', requires=IS_IN_SET(metrics, zero=None), default = metrics[0]),
-        Field('start', 'datetime', default=datetime(now.year,now.month,now.day,0,0)),
-        Field('end', 'datetime', default=datetime.now())
+        Field('start', 'datetime'),
+        Field('end', 'datetime')
         )
     return locals()
 
@@ -48,9 +46,10 @@ def get_data():
     query = db.reading.server == (session.server or 1)
     from datetime import datetime
     format = '%Y-%m-%d %H:%M:%S'
-    end = session.end or datetime.now()
-    start = session.start or datetime(end.year,end.month, end.day, 0, 0)
-    query &= (db.reading.created_on >= start) & (db.reading.created_on <= end)
+    if session.start:
+        query &= (db.reading.created_on >= datetime.strptime(session.start,format))
+    if session.end:
+        query &= (db.reading.created_on <=  datetime.strptime(session.end,format))
     readings = db(query).select(orderby=db.reading.created_on)
     from gluon.contrib import simplejson as sj
     import time
