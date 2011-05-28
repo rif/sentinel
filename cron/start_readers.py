@@ -1,11 +1,11 @@
 #!/bin/env python
 from random_reader import RandomReader
 from ssh_reader import SSHReader
-from snmp_reader import SNMPReader
+#from snmp_reader import SNMPReader
 
 class_dict = {'rnd': RandomReader,
               'ssh': SSHReader,
-              'snmp': SNMPReader}
+              'snmp': RandomReader}
 
 for s in db(db.server.is_active == True).select():
     try:
