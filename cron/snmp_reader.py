@@ -119,16 +119,16 @@ class SNMPReader(object):
 		memTmp_dict = self.query(self.memSettings_dict)
 		memTmp_dict = self.corelateCounterNameWithResult(self.memSettings_dict, memTmp_dict)
 
+		memBuffered	= int(memTmp_dict['membuffer'])
+		memChached	= int(memTmp_dict['memcached'])
+
 		memTotal	= int(memTmp_dict['memtotalreal'])
 		memFree		= int(memTmp_dict['memavailreal'])
-		memUsed		= memTotal - memFree
+		memUsed		= memTotal - memFree - memChached
 
 		swapTotal	= int(memTmp_dict['memtotalswap'])
 		swapFree	= int(memTmp_dict['memavailswap'])
 		swapUsed	= swapTotal - swapFree
-
-		memBuffered	= int(memTmp_dict['membuffer'])
-		memChached	= int(memTmp_dict['memcached'])
 
 		return [memTotal, memUsed, memFree, swapTotal, swapUsed, swapFree, memBuffered, memChached]
 
