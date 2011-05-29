@@ -60,6 +60,6 @@ def get_data():
          name= session.metric,
          pointInterval= 5 * 60 * 1000, # five minutes //24 * 3600 *1000 //one day
          pointStart= time.mktime(first_reading.created_on.timetuple())*1000 if first_reading else 0,
-         data= [float(r[metric]) for r in readings])
+         data= [r[metric] for r in readings])
     response.headers['Content-Type']='application/json'
     return sj.dumps(d)
