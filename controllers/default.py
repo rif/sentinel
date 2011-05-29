@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 def index():
-    if not session.server: session.server = 1
     servers = db(db.server).select(orderby=db.server.created_on)
+    if not session.server: session.server = servers.first().id if servers.first() else 1
     metrics = [f.replace('_',' ').title() for f in db.reading.fields[2:-1]]
     form = SQLFORM.factory(
         Field('metric', requires=IS_IN_SET(metrics, zero=None), default = metrics[0]),
