@@ -1,6 +1,6 @@
 from ConfigParser import SafeConfigParser
 
-INI_FILE = "deviceOIDs.ini"
+INI_FILE = "applications/sentinel/modules/deviceOIDs.ini"
 
 class Parser(object):
 	def __init__(self, iniFileName = INI_FILE):
