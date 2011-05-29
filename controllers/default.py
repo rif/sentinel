@@ -27,7 +27,6 @@ def server():
 
 def server_remove():
     db(db.server.id==a0).delete()
-    response.flash(T('Server deleted'))
     return ''
 
 def set_server():
