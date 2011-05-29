@@ -161,12 +161,12 @@ function setup(){
 	e.preventDefault();
     });
     $(".select-server").click(function(e){
-	    $(".selected-server").removeClass("selected-server")
-	    $(this).addClass("selected-server");
-	    $.get($(this).attr("href"),function(data){
-		reloadChart(options);
-	    });
-	    e.preventDefault();
+	$(".selected-server").removeClass("selected-server")
+	$(this).addClass("selected-server");
+	$.get($(this).attr("href"),function(data){
+	    reloadChart(options);
+	});
+	e.preventDefault();
     });
     $("#servers li").mouseover(function(){
 	$(this).children("a.undercover").fadeIn();

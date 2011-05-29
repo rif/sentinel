@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 def index():
+    if not session.server: session.server = 1
     servers = db(db.server).select(orderby=db.server.created_on)
     metrics = [f.replace('_',' ').title() for f in db.reading.fields[2:-1]]
     form = SQLFORM.factory(
@@ -15,14 +16,15 @@ def server():
     if form.accepts(request.vars, session):
         return """
 <li> 
-  <a class="reloader" href="%(rurl)s">%(addr)s</a> 
+  <a class="select-server" href="%(rurl)s" title="%(rdr)s">%(addr)s</a> 
   <a class="undercover edit-link" href="%(eurl)s">Edit</a>
   <a class="undercover delete-link" href="%(durl)s">Remove</a>
 </li> 
 """ % {'addr': form.vars.address,
-       'rurl': URL('set-server', args=form.vars.id),
+       'rurl': URL('set_server', args=form.vars.id),
        'eurl': URL('server', args=form.vars.id),
-       'durl': URL('server_remove', args=form.vars.id)}
+       'durl': URL('server_remove', args=form.vars.id),
+       'rdr': form.vars.reader}
     return locals()
 
 def server_remove():
@@ -42,7 +44,7 @@ def set_metrics():
     return sj.dumps([session.metric, session.start, session.end])
 
 def get_data():
-    query = db.reading.server == (session.server or 1)
+    query = (db.reading.server == (session.server or 1))
     from datetime import datetime
     format = '%Y-%m-%d %H:%M:%S'
     if session.start:

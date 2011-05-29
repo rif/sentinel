@@ -80,4 +80,3 @@ db.define_table('reading',
                 Field('created_on','datetime', default=request.now))
 
 a0,a1 = request.args(0), request.args(1)
-session.server = 1
