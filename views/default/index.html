@@ -104,14 +104,6 @@
 	
 	reloadChart(options);
 	setup();
-	$(".select-server").click(function(e){
-	    $(".selected-server").removeClass("selected-server")
-	    $(this).addClass("selected-server");
-	    $.get($(this).attr("href"),function(data){
-		reloadChart(options);
-	    });
-	    e.preventDefault();
-	});
 	$("#report>form").submit(function(){
 	    $.post("{{=URL('set_metrics')}}", $(this).serialize(), function(data){
 		options.title.text = data[0]
@@ -150,6 +142,7 @@ function setup(){
     $(".edit-link").unbind();
     $("#servers li").unbind();
     $(".delete-link").unbind();
+    $(".select-server").unbind();
     $(".edit-link").click(function(e){    
 	var link = $(this);
 	$(".editing").removeClass("editing");
@@ -167,7 +160,14 @@ function setup(){
 	}
 	e.preventDefault();
     });
-    
+    $(".select-server").click(function(e){
+	    $(".selected-server").removeClass("selected-server")
+	    $(this).addClass("selected-server");
+	    $.get($(this).attr("href"),function(data){
+		reloadChart(options);
+	    });
+	    e.preventDefault();
+    });
     $("#servers li").mouseover(function(){
 	$(this).children("a.undercover").fadeIn();
     }).mouseleave(function(){
