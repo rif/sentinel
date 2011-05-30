@@ -6,9 +6,7 @@ from pysnmp.proto import api
 from time import time, sleep
 from datetime import timedelta
 
-#from iniParser import Parser
-iniParser = local_import('iniParser')
-Parser = iniParser.Parser
+from iniParser import Parser
 
 class SNMPReader(object):
 	def __init__(self, host, port=161):
