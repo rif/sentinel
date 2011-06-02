@@ -1,11 +1,11 @@
 #!/bin/env python
-random_reader = local_import('random_reader')
-ssh_reader = local_import('ssh_reader')
-snmp_reader = local_import('snmp_reader')
+from random_reader import RandomReader
+from ssh_reader import SSHReader
+from snmp_reader import SNMPReader
 
-class_dict = {'rnd': random_reader.RandomReader,
-              'ssh': ssh_reader.SSHReader,
-              'snmp': snmp_reader.SNMPReader}
+class_dict = {'rnd': RandomReader,
+              'ssh': SSHReader,
+              'snmp': SNMPReader}
 
 for s in db(db.server.is_active == True).select():
     try:
