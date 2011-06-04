@@ -6,8 +6,8 @@ class Parser(object):
 	def __init__(self, iniFileName = INI_FILE):
 		self.scp = SafeConfigParser()
 		self.iniFileName = iniFileName
-		with open(iniFileName) as fp:
-			self.scp.readfp(fp)
+		fp =  open(iniFileName)
+		self.scp.readfp(fp)
 	
 	# Return a dictionary for which sections are the keys and the values are dict of settings and values from that section
 	def getDictOfAllSectionsAndSettings(self):
