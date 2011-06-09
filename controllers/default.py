@@ -14,17 +14,8 @@ def index():
 def server():
     form = crud.update(db.server, a0, deletable=False)
     if form.accepts(request.vars, session):
-        return """
-<li> 
-  <a class="select-server" href="%(rurl)s" title="%(rdr)s">%(addr)s</a> 
-  <a class="undercover edit-link" href="%(eurl)s">Edit</a>
-  <a class="undercover delete-link" href="%(durl)s">Remove</a>
-</li> 
-""" % {'addr': form.vars.address,
-       'rurl': URL('set_server', args=form.vars.id),
-       'eurl': URL('server', args=form.vars.id),
-       'durl': URL('server_remove', args=form.vars.id),
-       'rdr': form.vars.reader}
+        s = form.vars
+        return response.render('default/server_li.html', locals())
     return locals()
 
 def server_remove():

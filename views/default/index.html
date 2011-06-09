@@ -5,11 +5,7 @@
 <ul>
     <li><a class="edit-link" href="{{=URL('server')}}">{{=T('Add new')}}</a></li>
     {{for s in servers:}}
-    <li>
-      <a class="select-server {{='selected-server' if str(s.id)==session.server else ''}}" href="{{=URL('set_server', args=s.id)}}" title="{{=s.reader}}">{{=s.address}}</a>
-      <a class="undercover edit-link" href="{{=URL('server', args=s.id)}}">{{=T('Edit')}}</a>
-      <a class="undercover delete-link" href="{{=URL('server_remove', args=s.id)}}">{{=T('Remove')}}</a>
-    </li>
+    {{include 'default/server_li.html'}}
     {{pass}}
 </ul>
 </div>
