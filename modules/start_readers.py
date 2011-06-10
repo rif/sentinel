@@ -1,11 +1,17 @@
 #!/bin/env python
+import sys
 from random_reader import RandomReader
 from ssh_reader import SSHReader
-snmp_reader = local_import('snmp_reader')
+
+snmp_reader = False
+try:
+    snmp_reader = local_import('snmp_reader')
+except ImportError:
+    print "Please install pysnmp"
 
 class_dict = {'rnd': RandomReader,
               'ssh': SSHReader,
-              'snmp': snmp_reader.SNMPReader}
+              'snmp': snmp_reader.SNMPReader if snmp_reader else RandomReader}
 
 for s in db(db.server.is_active == True).select():
     try:
