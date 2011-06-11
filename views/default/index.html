@@ -1,180 +1,189 @@
 {{extend 'layout.html'}}
 
 <div id="servers">
-<div id="server-list">
-<ul>
-    <li><a class="edit-link" href="{{=URL('server')}}">{{=T('Add new')}}</a></li>
-    {{for s in servers:}}
-    {{include 'default/server_li.html'}}
-    {{pass}}
-</ul>
-</div>
+	<div id="server-list">
+		<ul>
+			<li>
+				<a class="edit-link" href="{{=URL('server')}}">{{=T('Add new')}}</a>
+			</li>
+			{{for s in servers:}}
+			{{include 'default/server_li.html'}}
+			{{pass}}
+		</ul>
+	</div>
 
-<div id="placeholder"></div>
+	<div id="dialog-form" title="{{=T('Server form')}}">
+	</div>
 </div>
 
 <div id="report">
-{{=form}}
-<center>
-    <div id="chart-container-1" style="height:50%; width: 60%"></div>
-</center>
+	{{=form}}
+	<center>
+		<div id="chart-container-1" style="height:50%; width: 60%">
+		</div>
+	</center>
 </div>
 
 <script type="text/javascript" src="{{=URL('static','js/highcharts.js')}}"></script>
 <script type="text/javascript" src="{{=URL('static','js/themes/grid.js')}}"></script>
 <script type="text/javascript" src="{{=URL('static','js/modules/exporting.js')}}"></script>
+<script type="text/javascript" src="{{=URL('static','js/jquery-ui-1.8.13.custom.min.js')}}"></script>
 
 <script type="text/javascript">
-    function reloadChart(options){
-	$.getJSON("{{=URL('get_data')}}", function(data){
-	    options.series[0] = data;
-	    chart = new Highcharts.Chart(options);
-	});
-    }
-    $(function() {
-	Highcharts.setOptions({
-	    global: {
-		useUTC: false
-	    }
-	});
-	options = {
-	    chart: {
-		renderTo: 'chart-container-1',
-		zoomType: 'x',
-		spacingRight: 20
-	    },
-	    title: {
-		text: 'Server Monitor'
-	    },
-	    subtitle: {
-		text: document.ontouchstart === undefined ?
-		    'Click and drag in the plot area to zoom in' :
-		    'Drag your finger over the plot to zoom in'
-	    },
-	    xAxis: {
-		type: 'datetime',
-		maxZoom: 3600000, // one hour
-		title: {
-		    text: null
-		}
-	    },
-	    yAxis: {
-		title: {
-		    text: 'Procentage or MB'
-		},
-		min: 0.6,
-		startOnTick: false,
-		showFirstLabel: false
-	    },
-	    tooltip: {
-		shared: true					
-	    },
-	    legend: {
-		enabled: false
-	    },
-	    plotOptions: {
-		area: {
-		    fillColor: {
-			linearGradient: [0, 0, 0, 300],
-			stops: [
-			    
-			    [1, 'rgba(2,0,0,0)']
-			]
-		    },
-		    lineWidth: 1,
-		    marker: {
-			enabled: false,
-			states: {
-			    hover: {
-				enabled: true,
-				radius: 5
-			    }
-			}
-		    },
-		    shadow: false,
-		    states: {
-			hover: {
-			    lineWidth: 1						
-			}
-		    }
-		}
-	    },
-	    
-	    series: []
-	};
-	
-	reloadChart(options);
-	setup();
-	$("#report>form").submit(function(){
-	    $.post("{{=URL('set_metrics')}}", $(this).serialize(), function(data){
-		options.title.text = data[0]
-		if(data[1] && data[2]){
-		    options.subtitle.text = 'From '+data[1]+' to '+data[2];
-		} else {
-		    options.subtitle.text = 'Click and drag in the plot area to zoom in';
-		}
-		reloadChart(options);
-	    });
-	    return false;
-	});
-    });	
-
-function prepareForm(link){
-    var href = link.attr("href");
-    $("#placeholder>form").submit(function(){
-	$.post(href, $(this).serialize(), function(data){
-	    if(data.indexOf("error") == -1){
-		if($(".editing").length != 0) { // we have elements in editing state
-		    $(".editing").parent().replaceWith(data);
-		} else {
-		    link.parents('ul').append(data); 
-		}
-		$("#placeholder").slideUp();
-		setup();
-	    } else {
-		$("#placeholder").html(data);
-		prepareForm(link);
-	    }
-	});
-	return false;
-    });
-};
-function setup(){
-    $(".edit-link").unbind();
-    $("#servers li").unbind();
-    $(".delete-link").unbind();
-    $(".select-server").unbind();
-    $(".edit-link").click(function(e){    
-	var link = $(this);
-	$(".editing").removeClass("editing");
-	link.prev("a").addClass("editing");
-	$("#placeholder").load($(this).attr("href"), function(){
-	    $(this).slideDown();
-	    prepareForm(link);
-	});
-	e.preventDefault();
-    });
-    $(".delete-link").click(function(e){
-	if(confirm("{{=T('Are you shure you want to delete this server? Deleting it will erase all readings related to it!')}}")) {
-	    $(this).parents("li:first").remove();
-	    $.get($(this).attr("href"));
+	function reloadChart(options) {
+		$.getJSON("{{=URL('get_data')}}", function(data) {
+			options.series[0] = data;
+			chart = new Highcharts.Chart(options);
+		});
 	}
-	e.preventDefault();
-    });
-    $(".select-server").click(function(e){
-	$(".selected-server").removeClass("selected-server")
-	$(this).addClass("selected-server");
-	$.get($(this).attr("href"),function(data){
-	    reloadChart(options);
-	});
-	e.preventDefault();
-    });
-    $("#servers li").mouseover(function(){
-	$(this).children("a.undercover").fadeIn();
-    }).mouseleave(function(){
-	$(this).children("a.undercover").fadeOut();
-    });
-    
-}
 
+	$( function() {
+		Highcharts.setOptions({
+			global: {
+				useUTC: false
+			}
+		});
+		options = {
+			chart: {
+				renderTo: 'chart-container-1',
+				zoomType: 'x',
+				spacingRight: 20
+			},
+			title: {
+				text: 'Server Monitor'
+			},
+			subtitle: {
+				text: document.ontouchstart === undefined ?
+				'Click and drag in the plot area to zoom in' :
+				'Drag your finger over the plot to zoom in'
+			},
+			xAxis: {
+				type: 'datetime',
+				maxZoom: 3600000, // one hour
+				title: {
+					text: null
+				}
+			},
+			yAxis: {
+				title: {
+					text: 'Procentage or MB'
+				},
+				min: 0.6,
+				startOnTick: false,
+				showFirstLabel: false
+			},
+			tooltip: {
+				shared: true
+			},
+			legend: {
+				enabled: false
+			},
+			plotOptions: {
+				area: {
+					fillColor: {
+						linearGradient: [0, 0, 0, 300],
+						stops: [
+
+						[1, 'rgba(2,0,0,0)']
+						]
+					},
+					lineWidth: 1,
+					marker: {
+						enabled: false,
+						states: {
+							hover: {
+								enabled: true,
+								radius: 5
+							}
+						}
+					},
+					shadow: false,
+					states: {
+						hover: {
+							lineWidth: 1
+						}
+					}
+				}
+			},
+
+			series: []
+		};
+
+		reloadChart(options);
+		setup();
+		$("#report>form").submit( function() {
+			$.post("{{=URL('set_metrics')}}", $(this).serialize(), function(data) {
+				options.title.text = data[0]
+				if(data[1] && data[2]) {
+					options.subtitle.text = 'From '+data[1]+' to '+data[2];
+				} else {
+					options.subtitle.text = 'Click and drag in the plot area to zoom in';
+				}
+				reloadChart(options);
+			});
+			return false;
+		});
+	});
+	function prepareForm(link) {
+		var href = link.attr("href");
+		$("#dialog-form>form").submit( function() {
+			$.post(href, $(this).serialize(), function(data) {
+				if(data.indexOf("error") == -1) {
+					if($(".editing").length != 0) { // we have elements in editing state
+						$(".editing").parent().replaceWith(data);
+					} else {
+						link.parents('ul').append(data);
+					}
+					$("#dialog-form").dialog("close");
+					setup();
+				} else {
+					$("#dialog-form").html(data);
+					prepareForm(link);
+				}
+			});
+			return false;
+		});
+	};
+
+	function setup() {
+		$(".edit-link").unbind();
+		$("#servers li").unbind();
+		$(".delete-link").unbind();
+		$(".select-server").unbind();
+		$(".edit-link").click( function(e) {
+			var link = $(this);
+			$(".editing").removeClass("editing");
+			link.prev("a").addClass("editing");
+			$("#dialog-form").load($(this).attr("href"), function() {
+				prepareForm(link);
+				$("#dialog-form").dialog("open");
+			});
+			e.preventDefault();
+		});
+		$(".delete-link").click( function(e) {
+			if(confirm("{{=T('Are you shure you want to delete this server? Deleting it will erase all readings related to it!')}}")) {
+				$(this).parents("li:first").remove();
+				$.get($(this).attr("href"));
+			}
+			e.preventDefault();
+		});
+		$(".select-server").click( function(e) {
+			$(".selected-server").removeClass("selected-server")
+			$(this).addClass("selected-server");
+			$.get($(this).attr("href"), function(data) {
+				reloadChart(options);
+			});
+			e.preventDefault();
+		});
+		$("#servers li").mouseover( function() {
+			$(this).children("a.undercover").fadeIn();
+		}).mouseleave( function() {
+			$(this).children("a.undercover").fadeOut();
+		});
+		$( "#dialog-form" ).dialog({
+			autoOpen: false,
+			width: 300,
+			modal: true
+		});
+	}
 </script>
